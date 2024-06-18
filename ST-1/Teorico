@@ -1,0 +1,136 @@
+Exemplo do Banco: https://range.wordpress.com/2007/12/11/pyke-and-programming-languages/
+
+Stor: https://pyke.sourceforge.net/logic_programming/pattern_matching/index.html
+
+Exemplo do Pricing: https://cyberdelia.github.io/pricing/
+
+
+Pyke: Automizar Lógica e construção de programas utilizando Python
+
+O Pyke trz nos um twist muito poderoso ao Python, originalmente um linguagem de programação Funcional, que passa a suportar linguagem Declarativa e redes de conhecimento.
+
+é uma ferramenta extremamente versátil, pois com ela podemos incorporar forward-chaining e ainda backward-chaining
+
+
+
+
+Logic Programming
+
+DECLARAÇÕES
+- Para simplificar, podemos pensar numa declaração em Pyke, como uma declaração escrita como:
+	- "João é filho da Maria e o Ricardo"
+Este exemplo, em PyKE será definido como:
+	- son_of(João, Maria, Ricardo)
+	
+Que terá como significado:
+	- son_of(son, father, mother)
+	
+
+
+
+##########################Knowledge Bases: ###################
+
+O que é que fazem?
+
+POdemos ter bases de conhecimento do tipo de factos (Contém listas de factos que são chamadas de base de factos, que determinam a sua vericidade simplesmente verificando a existência dos factos)
+Podemos ter bases de regras ( Contém um conjunto de regras do tipo if-then para tentar construir uma prova de vericidade. Pode conter backward-chaining ou forward-chaining)
+
+POdemos ainda ter outros tipos, tal como as bases de questões que servem para questionar o utilizador final, e coloca as respostas como declarações para o programa. (Utiliza ficheiros KQB. As perguntas feitas ao utilizador são gravadas até ao engine.reset ser feito, sendoq eu é partilhada pelas regras todas que necessitarem da resposta a esta pergunta)
+
+ Existe tambem as bases especiais, que é um ajudante do conhecimento por entidade, que determina se é uma declaração verdadeira ou não, de forma difente do normal.
+
+
+Neste exemplo, existem três bases de conhecimento (header, cookie e request). Seguidas pelas entidades de conhecimento, que podemos pensar como declarações, tipos ou tópicos.
+
+
+header.cookie('session=123456789;remember=the_alamo')
+cookie.session(123456789)
+cookie.remember(the_alamo)
+header.accept_encoding(gzip)
+header.accept_encoding(deflate)
+request.path('/my/site.html')
+request.path_segment(0, my)
+request.path_segment(1, 'site.html')
+request.path_segment(-2, my)
+request.path_segment(-1, 'site.html')
+
+Podemos então pensar no bases de conhecimento da seguinte forma:
+
+request.path_segment(-1, 'site_html') 
+	- family: knowledge base
+	- son_of: entidade de conhecimento, declaração ou tópico
+	- (JOão, Maria, Ricardo)_ declaração especifica sobre deteminada entidade/declaração
+	
+	
+	
+#################Pattern Matching ##################################
+
+Pattern Matching tem dois aspetos: padrões , que escrevemos e os que nśo fazemos corresponder, que é o que o PyKE faz aos nosso padrões
+
+Podem ser:
+	- Literal Patterns: Valores que apenas correspondem a eles mesmo
+		- Ou seja, as variáveis são fixas e acabou, É perguntar objetivamente se X pertence a Y
+	- Variable Patterns: Queremos perguntar quais são as variáveis que correspondem aquele nome:
+		exemplo:family.son_of($son, Thomas, Norma)
+		POdemos ver que $son não é fixo, ou seja, estamos a perguntar à base de conhecimento 
+		se existe algum tipo de declarações emn que tenham Thomas e Norma como pais
+		Devolve todos os filhes estre eles os dois
+		
+		Se não estivermos contentes, podemos pedir mais dizendo ao sistema "nope, try again" 
+		E ele irá pesquisar mais filhos do casal Podemos repetir isto, até deixar de existir 
+		possibilidades e assim, o sistema devolve "false"
+		
+		Anonymous Paattern:
+			Se quisermos saber todos os filhos da Norma, podemos ignorar a pesquisa do 
+			pai, simplesmente utilizando a notação $_father
+		Pattern Variable Identity
+			Se quisermos verificar todos os iflhos que têm o mesmo nome que o pai, 
+			iremos utilizar o mesmo nome de padrão, sendo assim, por exemplo
+			 son_of($father, $father, $_mother)
+	- TUple Patterns
+		Apenas podemos comparar com tuples. De forma a conectar um valor a outro, nenhum valor 
+		que esteja previamente definido pode ser diferente do seu par. 
+		Existe a possibilidade de colocar um * (asterisco) antes da variavel, de forma a esta
+		ser ignorada.
+		
+		
+#########Pathological Answer Responder depois######################´
+
+
+##################Rules############################################
+Uma regra é algo relativamente simples:
+
+	If (A,B,C) then (D,E)
+
+Que significa que se A,B,C forem vverdade, então teremos que D e E também o são
+
+Backtracking
+
+Tenta todas as combinações entre os factos até encontrar uma verdadeira, ou retornar falso.
+Se o Pyke aprova um facto, ele porcede para baixo na lista, se falhar volta atrás, tentando verificar outra premissa
+
+########Inferencia- Ambos os tipos podem estar na mesma base de conhecimento #############
+Forward-chaining podem verificar novos factos e ativar regras mais especificas
+
+Bakward-chaining são processados quando o programa pergunta ao PyKE para provar um objetivo especifico
+ESsas regras são designadas para responder a uma questão, em vez de tentar criar novas regras, ou ativar mais regras especificass
+
+	1. Pyke starts by finding a rule whose then part matches the goal.
+	2. Pyke the process the if part of the rule
+	3. POde ligar à parte then the outra regra
+	
+Esta imagem!!  https://pyke.sourceforge.net/logic_programming/rules/backward_chaining.html
+E ler isto de nov0......
+	
+######## Plans and Automatica Program Generation ################
+
+Attach funções python às regras de backward-chaining. Estas funções estão escritas no clausula with no final the cada regra no ficheiro .krb. Não afetam como as regras correm para provar o objetivo
+
+
+ 
+
+	
+			
+ 
+
+

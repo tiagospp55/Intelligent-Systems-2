@@ -1,7 +1,7 @@
 
-:- discontiguous np/2, vp/2, properNoun/2, commonNoun/2.
-:- discontiguous pronoun/2, pp/2, preposition/2, adverb/2.
-:- discontiguous article/2, verb/2, adjective/2.
+:- discontiguous np/4, vp/4, properNoun/4, commonNoun/4.
+:- discontiguous pronoun/4, pp/3, preposition/3, adverb/3.
+:- discontiguous article/4, verb/4, adjective/3.
 
 :- discontiguous example/2.
 
@@ -13,82 +13,83 @@ example(4,[peter,is,a,man]).
 example(5,[the,cats,are,beautiful]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-sentence --> np, vp.
+sentence(s(NP,VP)) --> np(Num,NP,subj), vp(Num,VP).
 
-np --> properNoun.
-np --> article, commonNoun.
+np(Num,np(Noun)) --> properNoun(Num,Noun).
+np(Num,np(Art,Noun)) --> article(Num,Art), commonNoun(Num, Noun).
 
-vp --> verb, np.
-vp --> verb, adjective.
+vp(Num, vp(Verb,NP)) --> verb(Num,Verb), np(_,NP,obj).
+vp(Num, vp(Verb,Adj)) --> verb(Num,Verb), adjective(Adj).
 
-commonNoun --> [breeze].
-commonNoun --> [city].
-commonNoun --> [man].
-commonNoun --> [men].
-commonNoun --> [cat].
-commonNoun --> [cats].
+commonNoun(sing,cnoun(breeze)) --> [breeze].
+commonNoun(sing,cnoun(city)) --> [city].
+commonNoun(sing,cnoun(man)) --> [man].
+commonNoun(sing,cnoun(men)) --> [men].
+commonNoun(sing,cnoun(cat)) --> [cat].
+commonNoun(sing,cnoun(cats)) --> [cats].
 
-properNoun --> [peter].
-properNoun --> [aveiro].
+properNoun(sing, pnoun(peter)) --> [peter].
+properNoun(sing, pnoun(aveiro)) --> [aveiro].
 
-verb --> [is].
-verb --> [are].
+verb(sing, verb(is)) --> [is].
+verb(plur, verb(are)) --> [are].
 
-adjective --> [smelly].
-adjective --> [beautiful].
+adjective(adj(smelly)) --> [smelly].
+adjective(adj(beatiful)) --> [beautiful].
 
-article --> [the].
-article --> [a].
-article --> [an].
+%%% Falta daqui
+article(sing, art(the)) --> [the].
+article(sing, art(a)) --> [a].
+article(sing, art(an)) --> [an].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 example(6,[peter,is,in,aveiro]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Awui
+vp(Num, vp(Verb,PP)) --> verb(Num,Verb), pp(PP).
 
-vp --> verb, pp.
+pp(pp(Prep,Np)) --> preposition(Prep), np(_,NP, obj).
 
-pp --> preposition, np.
-
-preposition --> [in].
+preposition(prep(in)) --> [in].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 example(7,[he,is,in,aveiro]).
 example(8,[she,loves,him]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-np --> pronoun.
+np(Num,np(Pron)) --> pronoun(Num,Pron).
 
-verb --> [love].
+verb(sing,verb(love)) --> [love].
 verb --> [loves].
 
-pronoun --> [i].
-pronoun --> [you].
-pronoun --> [he].
-pronoun --> [she].
-pronoun --> [we].
-pronoun --> [they].
+pronoun(sing,pron(i)) --> [i].
+pronoun(sing, pron(you)) --> [you].
+pronoun(sing, pron(he)) --> [he].
+pronoun(sing, pron(she)) --> [she].
+pronoun(sing, pron(we)) --> [we].
+pronoun(sing, pron(they)) --> [they].
 
-pronoun --> [me].
-pronoun --> [you].
-pronoun --> [him].
-pronoun --> [her].
-pronoun --> [them].
-pronoun --> [us].
+pronoun(sing, pron(me)) --> [me].
+pronoun(sing, pron(you)) --> [you].
+pronoun(sing, pron(him)) --> [him].
+pronoun(sing, pron(her)) --> [her].
+pronoun(sing, pron(them)) --> [them].
+pronoun(sing, pron(us)) --> [us].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 example( 9,[you,give,the,gold,to,me]).
 example(10,[you,give,me,the,gold]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-vp --> verb, np, np.
-vp --> verb, np, pp.
+vp(Num,vp(Verb, NP1,NP2)) --> verb(Num,Verb), np(_,NP1,obj), np(_,NP2,obj).
+vp(Num,vp(Verb, NP,PP)) --> verb(Num,Verb), np(_,NP,obj), pp(PP).
 
-verb --> [give].
-verb --> [gives].
+verb(sing, verb(give)) --> [give].
+verb(sing, verb(gives)) --> [gives].
 
-commonNoun --> [gold].
+commonNoun(sing(cnoun(gold))) --> [gold].
 
-preposition --> [to].
+preposition(prep(to)) --> [to].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 example(11,[they,smell,the,wumpus]).
@@ -96,37 +97,37 @@ example(12,[the,wumpus,smells,awful]).
 example(13,[peter,smells,like,a,wumpus]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-verb --> [smell].
-verb --> [smells].
+verb(sing, verb(smell)) --> [smell].
+verb(sing,verb(smeels)) --> [smells].
 
-adjective --> [awful].
+adjective(adj(awful)) --> [awful].
 
-preposition --> [like].
+preposition(prep(like)) --> [like].
 
-commonNoun --> [wumpus].
+commonNoun(sing, cnoun(wumpus)) --> [wumpus].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 example(14,[the,cat,is,here]).
 example(15,[peter,is,there]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-vp --> verb, adverbe.
+vp(Num, vp(Verb, Adv)) --> verb(Num,Verb), adverbe(Adv).
 
-adverbe --> [here].
-adverbe --> [there].
+adverbe(adv(here)) --> [here].
+adverbe(adv(there)) --> [there].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 example(16,[the,beautiful,cat,died]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-vp --> verb.
+vp(Num,vp(Verb)) --> verb(Num, Verb).
 
-np --> article, adjective, commonNoun.
+np(Num) --> article(Num,Art), adjective(Adj), commonNoun(Num,Noun).
 
 
 % =========================================
 
 parse_all_examples(L)
-:- findall(X,(example(X,Words),sentence(Words,[])),L).
+:- findall(X,(example(X,Words),sentence(ST,Words,[],writeln(X/ST))),L).
 
 

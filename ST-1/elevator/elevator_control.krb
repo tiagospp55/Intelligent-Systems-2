@@ -1,0 +1,154 @@
+#ficheiro com regras
+
+# quando uma pessoa esta a espera e o elevador esta vazio nesse piso com a porta fechada
+open_to_enter_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,open) taking (current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereWaiting)
+        check $Door == 0
+        check $CurrentFloor == $WhereWaiting            
+        check $PassengersInside == 0
+        check $PassengersWaiting == 1
+    with
+        print(f"Pessoa a espera no piso {current_floor} com o elevador no piso {current_floor} com a porta fechada")
+        
+# quando uma pessoa esta dentro do elevador, chegou ao destino e a porta esta fechada
+open_to_leave_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,open) taking (current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereTo)
+        check $Door == 0
+        check $CurrentFloor == $WhereTo            
+        check $PassengersInside == 1
+    with
+        print(f"Pessoa dentro do elevador no piso {current_floor} com o elevador no piso {current_floor} com a porta fechada")
+
+# quando uma pessoa esta a espera e o elevador esta vazio nesse piso com a porta aberta
+wait_to_enter_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,wait) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereWaiting)
+        check $Door == 1
+        check $CurrentFloor == $WhereWaiting            
+        check $PassengersInside == 0
+        check $PassengersWaiting == 1
+    with
+        print(f"Pessoa a espera no piso {current_floor} com o elevador no piso {current_floor} com a porta aberta")
+        
+# quando uma pessoa esta dentro do elevador, chegou ao destino e a porta esta aberta
+wait_to_leave_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,wait) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereTo)
+        check $Door == 1
+        check $CurrentFloor == $WhereTo            
+        check $PassengersInside == 1
+    with
+        print(f"Pessoa dentro do elevador no piso {current_floor} com o elevador no piso {current_floor} com a porta aberta")
+
+#quando a pessoa ja saiu do elevador, nao ha ninguem a espera e o elevador tem a porta fechada
+wait_nobody_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,wait) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereTo)
+        check $Door == 0           
+        check $PassengersInside == 0
+        check $PassengersWaiting == 0
+    with
+        print("Ninguem dentro do elevador e ninguem a espera")
+
+
+# quando uma pessoa esta a espera no elevador num piso superior, a porta esta fechada
+up_waiting_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,up) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereWaiting)
+        check $Door == 0
+        check $PassengersInside == 0
+        check $PassengersWaiting == 1
+        check $WhereWaiting > $CurrentFloor
+    with
+        print(f"Ninguem dentro do elevador, pessoa a espera no piso {where_waiting}, elevador no piso {current_floor} com a porta fechada")
+        
+# quando uma pessoa esta dentro do elevador e o piso de destino ainda e superior (porta fechada)
+up_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,up) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereTo)
+        check $Door == 0
+        check $PassengersInside == 1
+        check $WhereTo > $CurrentFloor
+    with
+        print(f"Pessoa dentro do elevador no piso {current_floor}, com piso destino {where_to} e elevador com porta fechada")
+
+# quando uma pessoa esta a espera no elevador num piso inferior, a porta esta fechada
+down_waiting_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,down) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereWaiting)
+        check $Door == 0
+        check $PassengersInside == 0
+        check $PassengersWaiting == 1
+        check $WhereWaiting < $CurrentFloor
+    with
+        print(f"Ninguem dentro do elevador, pessoa a espera no piso {where_waiting}, elevador no piso {current_floor} com a porta fechada")
+
+# quando uma pessoa esta dentro do elevador e o piso de destino ainda e inferior (porta fechada)       
+down_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,down) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereTo)
+        check $Door == 0
+        check $PassengersInside == 1
+        check $WhereTo < $CurrentFloor
+    with
+        print(f"Pessoa dentro do elevador no piso {current_floor}, com piso destino {where_to} e elevador com porta fechada")
+
+# quando a pessoa esta dentro do elevador, a porta esta aberta e o destino e diferente do piso atual
+close_to_destiny_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,close) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereTo)
+        check $Door == 1
+        check $PassengersInside == 1
+        check $WhereTo != $CurrentFloor
+    with
+        print(f"Pessoa dentro do elevador no piso {current_floor} e a porta esta aberta")
+
+# quando a pessoa ja saiu do elevador, esta outra a espera num destino diferente do piso atual e a porta esta aberta
+close_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,close) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereTo)
+        check $Door == 1
+        check $PassengersInside == 0
+        check $PassengersWaiting == 1
+        check $WhereTo != $CurrentFloor
+    with
+        print(f"Ninguem dentro do elevador, elevador no piso {current_floor} com a porta aberta e pessoa ha espera no piso {where_waiting}")
+
+#quando toda a gente ja saiu do elevador e nao ha ninguem a espera e o elevador esta com a porta aberta
+close_nobody_action
+    use actions($CurrentFloor,$PassengersInside,$PassengersWaiting,$WhereTo,$WhereWaiting,$Door,close) taking(current_floor,where_to,where_waiting)
+    when
+        floors.floor($CurrentFloor)
+        floors.floor($WhereTo)
+        check $Door == 1
+        check $PassengersInside == 0
+        check $PassengersWaiting == 0
+    with
+        print(f"Ninguem dentro do elevador, nao ha ninguem ha espera e o elevador tem a porta aberta")
+
+
+
